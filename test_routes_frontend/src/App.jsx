@@ -6,7 +6,6 @@ import { deleteRoute, getIndex, postRoute, putRoute } from './assets/service/Ser
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 function App() {
-  const [refresh, setRefresh] = useState(0)
   const [users, setUsers] = useState([])
   const [lessons, setLessons] = useState([])
 

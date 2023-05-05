@@ -3,6 +3,8 @@ import { findUserByName } from "../service/Helpers"
 
 const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
     const [newLesson, setNewLesson] = useState({})
+    const [lessonToEdit, setLessonToEdit] = useState({})
+    const [editClicked, setEditClicked] = useState(false)
     
     const lessonsList = lessons.map(lesson=>{
         return(
@@ -22,6 +24,14 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
             <option key={i}>{name}</option>
         )
     })
+
+    const editLesson = (e)=>{
+        console.log('editlesson')
+    }
+    const onChangeEdit = (e)=>{
+        console.log('onChangeEdit')
+    }
+
 
     const submitLesson = (e)=>{
         e.preventDefault()
@@ -52,6 +62,7 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
                     {lessonsList}
                 </tbody>
             </table>
+            <hr />
             <h2>Add Lesson</h2>
             <form onSubmit={submitLesson}>
                 <div>
@@ -70,6 +81,30 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
                 </div>
                 <button type="submit">Submit</button>
             </form>
+            <hr />
+            {editClicked  ?
+            <>
+            <h2>Edit Lesson</h2>
+            <form onSubmit={editLesson}>
+                <div>
+                    <label htmlFor="name">Lesson Name: </label>
+                    <input onChange={onChangeEdit} type="text" id="name"/>
+                </div>
+                <div>
+                    <label htmlFor="capacity">Capacity: </label>
+                    <input onChange={onChangeEdit} type="number" id="capacity"/>
+                </div>
+                <div>
+                    <label htmlFor="user">User: </label>
+                    <select id="user">
+                        {userOptions}
+                    </select>                
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            </>
+            :
+            <></>}
         </>
     )
 }
