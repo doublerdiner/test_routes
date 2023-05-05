@@ -2,6 +2,7 @@ package com.codeclan.testroutes.controllers;
 
 import com.codeclan.testroutes.modules.User;
 import com.codeclan.testroutes.repositories.UserRepository;
+import org.springframework.aot.generate.AccessControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 public class UserController {
     @Autowired
     UserRepository userRepository;
-
+    @CrossOrigin
     @GetMapping(value = "/users")
     public ResponseEntity<List<User>> getAllUsers(){
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
