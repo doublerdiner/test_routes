@@ -1,6 +1,10 @@
 package com.codeclan.testroutes.modules;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -13,9 +17,14 @@ public class User {
 
     private int age;
 
+    @JsonIgnoreProperties({"user"})
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Lesson> lessons;
+
     public User(String name, int age) {
         this.name = name;
         this.age = age;
+        this.lessons = new ArrayList<>();
     }
 
     public User() {
@@ -43,5 +52,13 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public List<Lesson> getLessons() {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
 }
