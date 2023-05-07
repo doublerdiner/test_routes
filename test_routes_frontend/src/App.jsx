@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 function App() {
   const [users, setUsers] = useState([])
   const [lessons, setLessons] = useState([])
+  const [pupils, setPupils] = useState([])
 
     const sleep = (ms)=>{
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -21,10 +22,14 @@ function App() {
     const getAllLessons = ()=>{getIndex('lessons').then(allLessons => {
       setLessons(allLessons)
     })}
+    const getAllPupils = ()=>{getIndex('pupils').then(allPupils => {
+      setPupils(allPupils)
+    })}
   
   useEffect(()=>{
     getAllUsers()
     getAllLessons()
+    getAllPupils()
   }, [])
 
   const postUser = (data)=>{
@@ -45,18 +50,27 @@ function App() {
 
   const deleteUser = (user)=>{
     const temp = [...users]
-    const userId = temp.indexOf(user)
-    temp.splice(userId, 1)
-    deleteRoute('users/', user.id)
-    .then(setUsers(temp))
+    const collection = deleteItem(user, temp)
+    deleteRoute(`users/`, user.id)
+    .then(setUsers(collection))
     sleep(500).then(()=>{getAllLessons()})
   }
   const deleteLesson = (lesson)=>{
     const temp = [...lessons]
-    const lessonId = temp.indexOf(lesson)
-    temp.splice(lessonId, 1)
+    const collection = deleteItem(lesson, temp)
     deleteRoute('lessons/', lesson.id)
-    .then(setLessons(temp))
+    .then(setLessons(collection))
+  }
+  const deletePupil = (pupil)=>{
+    const temp = [...pupils]
+    const collection = deleteItem(pupil, temp)
+    deleteRoute('pupils/', pupil.id)
+    .then(setPupils(collection))
+  }
+  const deleteItem = (item, collection)=>{
+    const id = collection.indexOf(item)
+    collection.splice(id, 1)
+    return collection
   }
 
   const updateUser = (newUser, user)=>{
@@ -72,6 +86,7 @@ function App() {
     temp[index] = editedLesson
     putRoute('lessons/', editedLesson.id, editedLesson)
     .then(setLessons(temp))
+    sleep(500).then(()=>{getAllPupils()})
   }
 
   return (
@@ -95,12 +110,15 @@ function App() {
         <Route path='/lessons' element={<Lessons
         lessons={lessons}
         users={users}
+        pupils={pupils}
         postLesson={postLesson}
         deleteLesson={deleteLesson}
         updateLesson={updateLesson}/>}></Route>
-        <Route path='/pupils' element={<Pupils/>
-
+        <Route path='/pupils' element={<Pupils
+        pupils={pupils}
+        deletePupil={deletePupil}/>
         }></Route>
+        {/* <Route path={`/pupil/${pupil.id}`}></Route> */}
         
         </>
         :

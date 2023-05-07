@@ -1,4 +1,4 @@
-export const findUserByName = (users, newName)=>{
-    const answer = users.find((user) => user.name===newName)
+export const findByName = (array, newName)=>{
+    const answer = array.find((item) => item.name===newName)
     return answer
 }

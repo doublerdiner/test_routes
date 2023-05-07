@@ -57,6 +57,7 @@ public class DataLoader implements ApplicationRunner {
         lesson2.savePupilToLesson(pupil3);
         lesson3.savePupilToLesson(pupil7);
         pupil.saveLessonToPupil(lesson);
+        pupil.saveLessonToPupil(lesson2);
         pupil4.saveLessonToPupil(lesson);
         pupil2.saveLessonToPupil(lesson2);
         pupil3.saveLessonToPupil(lesson2);

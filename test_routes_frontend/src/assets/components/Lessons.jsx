@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { findUserByName } from "../service/Helpers"
+import { findByName } from "../service/Helpers"
 
-const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
+const Lessons = ({lessons, users, pupils, postLesson, deleteLesson, updateLesson})=>{
     const [newLesson, setNewLesson] = useState({})
     const [lessonToEdit, setLessonToEdit] = useState({})
     const [editClicked, setEditClicked] = useState(false)
@@ -18,13 +18,14 @@ const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
         )
     })
 
-    const userNames = users.map(user=>user.name)
-    const sortedNames = userNames.sort()
-    const userOptions = sortedNames.map((name, i)=>{
-        return (
-            <option key={i}>{name}</option>
-        )
-    })
+    const mapThis = (array)=>{
+        const mapThisName = array.map(item=>item.name)
+        return mapThisName.sort()
+    }
+
+    const userOptions = mapThis(users).map((name, i)=>{return <option key={i}>{name}</option>})
+    const lessonOptions = mapThis(lessons).map((name, i)=>{return <option key={i}>{name}</option>})
+    const pupilOptions = mapThis(pupils).map((name, i)=>{return <option key={i}>{name}</option>})
 
     const editLesson = (lesson)=>{
         if (lesson === lessonToEdit){
@@ -57,7 +58,7 @@ const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
 
     const submitLesson = (e)=>{
         e.preventDefault()
-        const lessonUser = findUserByName(users, e.target[2].value)
+        const lessonUser = findByName(users, e.target[2].value)
         const temp = newLesson
         temp.user = lessonUser
         postLesson(temp)
@@ -68,6 +69,16 @@ const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
         temp[e.target.id] = e.target.value
         setNewLesson(temp)
     }
+
+    const addPupil = (e)=>{
+        e.preventDefault()
+        const lesson = findByName(lessons, e.target[0].value)
+        const pupil = findByName(pupils, e.target[1].value)
+        lesson.pupils.push(pupil)
+        updateLesson(lesson)
+    }
+    console.log(lessons)
+    console.log(pupils)
 
     return(
         <>
@@ -129,6 +140,23 @@ const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
             </>
             :
             <></>}
+            <hr />
+            <h2>Add Pupil to Lesson</h2>
+            <form onSubmit={addPupil}>
+                <div>
+                    <label htmlFor="lesson">Lesson: </label>
+                    <select id="lesson">
+                        {lessonOptions}
+                    </select>                
+                </div>
+                <div>
+                    <label htmlFor="pupil">Pupil: </label>
+                    <select id="pupil">
+                        {pupilOptions}
+                    </select>                
+                </div>
+                <button type="submit">Submit</button>
+            </form>
         </>
     )
 }
