@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import User from './assets/components/User'
 import Lessons from './assets/components/Lessons'
+import Pupils from './assets/components/Pupils'
 import { deleteRoute, getIndex, postRoute, putRoute } from './assets/service/Service'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
@@ -9,14 +10,22 @@ function App() {
   const [users, setUsers] = useState([])
   const [lessons, setLessons] = useState([])
 
-  useEffect(()=>{
-    getIndex('users').then(allUsers => {
+    const sleep = (ms)=>{
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+
+    const getAllUsers = ()=>{getIndex('users').then(allUsers => {
       setUsers(allUsers)
-    })
-    getIndex('lessons').then(allLessons => {
+    })}
+    const getAllLessons = ()=>{getIndex('lessons').then(allLessons => {
       setLessons(allLessons)
-    })
-  }, [lessons])
+    })}
+  
+  useEffect(()=>{
+    getAllUsers()
+    getAllLessons()
+  }, [])
 
   const postUser = (data)=>{
     const temp = [...users]
@@ -40,6 +49,7 @@ function App() {
     temp.splice(userId, 1)
     deleteRoute('users/', user.id)
     .then(setUsers(temp))
+    sleep(500).then(()=>{getAllLessons()})
   }
   const deleteLesson = (lesson)=>{
     const temp = [...lessons]
@@ -56,6 +66,13 @@ function App() {
     putRoute('users/', newUser.id, newUser)
     .then(setUsers(temp))
   }
+  const updateLesson = (editedLesson)=>{
+    const temp = [...lessons]
+    const index = temp.find((lesson) => lesson.id === editedLesson.id)
+    temp[index] = editedLesson
+    putRoute('lessons/', editedLesson.id, editedLesson)
+    .then(setLessons(temp))
+  }
 
   return (
     <>
@@ -63,7 +80,8 @@ function App() {
       <header>
         <h1>Testing</h1>
         <Link to="/">Users</Link>
-        <Link to="/Lessons">Lessons</Link>
+        <Link to="/lessons">Lessons</Link>
+        <Link to="/pupils">Pupils</Link>
       </header>
       <Routes>
         
@@ -78,7 +96,12 @@ function App() {
         lessons={lessons}
         users={users}
         postLesson={postLesson}
-        deleteLesson={deleteLesson}/>}></Route>
+        deleteLesson={deleteLesson}
+        updateLesson={updateLesson}/>}></Route>
+        <Route path='/pupils' element={<Pupils/>
+
+        }></Route>
+        
         </>
         :
         <h1>Loading</h1>}

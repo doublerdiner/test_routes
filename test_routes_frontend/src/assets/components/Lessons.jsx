@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { findUserByName } from "../service/Helpers"
 
-const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
+const Lessons = ({lessons, users, postLesson, deleteLesson, updateLesson})=>{
     const [newLesson, setNewLesson] = useState({})
     const [lessonToEdit, setLessonToEdit] = useState({})
     const [editClicked, setEditClicked] = useState(false)
@@ -13,6 +13,7 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
                 <td>{lesson.capacity}</td>
                 <td>{lesson.user.name}</td>
                 <td><button onClick={()=>{deleteLesson(lesson)}}>Delete</button></td>
+                <td><button onClick={()=>{editLesson(lesson)}}>Edit</button></td>
             </tr>
         )
     })
@@ -25,11 +26,32 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
         )
     })
 
-    const editLesson = (e)=>{
-        console.log('editlesson')
+    const editLesson = (lesson)=>{
+        if (lesson === lessonToEdit){
+            cancelEditLesson()
+        }
+        else{
+        setEditClicked(true)
+        setLessonToEdit(lesson)
+        }
+    }
+    const cancelEditLesson = ()=>{
+        setEditClicked(false)
+        setLessonToEdit({})
     }
     const onChangeEdit = (e)=>{
-        console.log('onChangeEdit')
+        const temp = lessonToEdit
+        temp[e.target.id] = e.target.value
+        setLessonToEdit(temp)
+    }
+    const submitEditLesson = (e)=>{
+        e.preventDefault()
+        const lessonUser = findUserByName(users, e.target[2].value)
+        lessonToEdit.user = lessonUser
+        updateLesson(lessonToEdit)
+        e.target.reset()
+        setLessonToEdit({})
+        cancelEditLesson()
     }
 
 
@@ -58,6 +80,7 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
                         <th>Capacity</th>
                         <th>User Name</th>
                         <th>Delete</th>
+                        <th>Edit</th>
                     </tr>
                     {lessonsList}
                 </tbody>
@@ -85,23 +108,24 @@ const Lessons = ({lessons, users, postLesson, deleteLesson})=>{
             {editClicked  ?
             <>
             <h2>Edit Lesson</h2>
-            <form onSubmit={editLesson}>
+            <form onSubmit={submitEditLesson}>
                 <div>
                     <label htmlFor="name">Lesson Name: </label>
-                    <input onChange={onChangeEdit} type="text" id="name"/>
+                    <input onChange={onChangeEdit} type="text" defaultValue={lessonToEdit.name} id="name"/>
                 </div>
                 <div>
                     <label htmlFor="capacity">Capacity: </label>
-                    <input onChange={onChangeEdit} type="number" id="capacity"/>
+                    <input onChange={onChangeEdit} type="number" defaultValue={lessonToEdit.capacity} id="capacity"/>
                 </div>
                 <div>
                     <label htmlFor="user">User: </label>
-                    <select id="user">
+                    <select id="user" defaultValue={lessonToEdit.user.name}>
                         {userOptions}
                     </select>                
                 </div>
                 <button type="submit">Submit</button>
             </form>
+            <button onClick={cancelEditLesson} type="button">Cancel</button>
             </>
             :
             <></>}

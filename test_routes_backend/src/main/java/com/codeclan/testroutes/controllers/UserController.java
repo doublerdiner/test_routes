@@ -43,6 +43,7 @@ public class UserController {
         User newUser = userRepository.findById(id).get();
         newUser.setName(user.getName());
         newUser.setAge(user.getAge());
+        newUser.setLessons(user.getLessons());
         userRepository.save(newUser);
         return new ResponseEntity<>(newUser, HttpStatus.ACCEPTED);
     }

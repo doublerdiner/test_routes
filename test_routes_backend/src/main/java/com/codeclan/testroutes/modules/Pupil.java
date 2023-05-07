@@ -1,57 +1,54 @@
 package com.codeclan.testroutes.modules;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
-@Table(name = "lessons")
-public class Lesson {
+@Table(name = "pupils")
+public class Pupil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-
-    private int capacity;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"lessons"})
-    private User user;
+    @Column(name = "year_group")
+    private YearType yearGroup;
 
     @ManyToMany
-    @JsonIgnoreProperties({"lessons"})
+    @JsonIgnoreProperties({"pupils"})
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinTable(
             name = "lessons_pupils",
             joinColumns = {
                     @JoinColumn(
-                            name = "lesson_id",
+                            name = "pupil_id",
                             nullable = false,
                             updatable = false
                     )
             },
             inverseJoinColumns = {
                     @JoinColumn(
-                            name = "pupil_id",
+                            name = "lesson_id",
                             nullable = false,
                             updatable = false
                     )
             }
     )
-    private List<Pupil> pupils;
+    private List<Lesson> lessons;
 
-    public Lesson(String name, int capacity, User user) {
+    public Pupil(String name, YearType yearGroup) {
         this.name = name;
-        this.capacity = capacity;
-        this.user = user;
-        this.pupils = new ArrayList<>();
+        this.yearGroup = yearGroup;
+        this.lessons = new ArrayList<>();
     }
 
-    public Lesson() {
+    public Pupil() {
     }
 
     public Long getId() {
@@ -70,30 +67,22 @@ public class Lesson {
         this.name = name;
     }
 
-    public int getCapacity() {
-        return capacity;
+    public YearType getYearGroup() {
+        return yearGroup;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+    public void setYearGroup(YearType yearGroup) {
+        this.yearGroup = yearGroup;
     }
 
-    public User getUser() {
-        return user;
+    public List<Lesson> getLessons() {
+        return lessons;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
-
-    public List<Pupil> getPupils() {
-        return pupils;
-    }
-
-    public void setPupils(List<Pupil> pupils) {
-        this.pupils = pupils;
-    }
-    public void savePupilToLesson(Pupil pupil){
-        this.pupils.add(pupil);
+    public void saveLessonToPupil(Lesson lesson){
+        this.lessons.add(lesson);
     }
 }

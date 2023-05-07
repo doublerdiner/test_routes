@@ -43,6 +43,7 @@ public class LessonController {
         newLesson.setName(lesson.getName());
         newLesson.setCapacity(lesson.getCapacity());
         newLesson.setUser(lesson.getUser());
+        newLesson.setPupils(lesson.getPupils());
         lessonRepository.save(newLesson);
         return new ResponseEntity<>(newLesson, HttpStatus.ACCEPTED);
     }
