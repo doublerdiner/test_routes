@@ -3,17 +3,17 @@ import './App.css'
 import User from './assets/components/User'
 import Lessons from './assets/components/Lessons'
 import Pupils from './assets/components/Pupils'
+import PupilView from './assets/components/PupilView'
 import { deleteRoute, getIndex, postRoute, putRoute } from './assets/service/Service'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { findByName, sleep } from './assets/service/Helpers'
 
 function App() {
   const [users, setUsers] = useState([])
   const [lessons, setLessons] = useState([])
   const [pupils, setPupils] = useState([])
 
-    const sleep = (ms)=>{
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+
     
 
     const getAllUsers = ()=>{getIndex('users').then(allUsers => {
@@ -46,6 +46,7 @@ function App() {
       temp.push(lesson)
       setLessons(temp)
     })
+    getAllPupils()
   }
 
   const deleteUser = (user)=>{
@@ -60,6 +61,7 @@ function App() {
     const collection = deleteItem(lesson, temp)
     deleteRoute('lessons/', lesson.id)
     .then(setLessons(collection))
+    sleep(500).then(()=>{getAllPupils()})
   }
   const deletePupil = (pupil)=>{
     const temp = [...pupils]
@@ -71,6 +73,13 @@ function App() {
     const id = collection.indexOf(item)
     collection.splice(id, 1)
     return collection
+  }
+  const removePupil = (editLesson, editPupil)=>{
+    const thisLesson = lessons.find((lesson)=>lesson.id === editLesson.id)
+    const index = findByName(thisLesson.pupils, editPupil.name)
+    const id = thisLesson.pupils.indexOf(index)
+    thisLesson.pupils.splice(id, 1)
+    updateLesson(thisLesson)
   }
 
   const updateUser = (newUser, user)=>{
@@ -87,6 +96,14 @@ function App() {
     putRoute('lessons/', editedLesson.id, editedLesson)
     .then(setLessons(temp))
     sleep(500).then(()=>{getAllPupils()})
+  }
+  const updatePupil = (editedPupil)=>{
+    const temp = [...pupils]
+    const index = temp.find((pupil) => pupil.id === editedPupil.id)
+    temp[index] = editedPupil
+    putRoute('pupils/', editedPupil.id, editedPupil)
+    .then(setPupils(temp))
+    sleep(500).then(()=>{getAllLessons()})
   }
 
   return (
@@ -114,12 +131,10 @@ function App() {
         postLesson={postLesson}
         deleteLesson={deleteLesson}
         updateLesson={updateLesson}/>}></Route>
-        <Route path='/pupils' element={<Pupils
-        pupils={pupils}
-        deletePupil={deletePupil}/>
-        }></Route>
-        {/* <Route path={`/pupil/${pupil.id}`}></Route> */}
-        
+        <Route path='/pupils'>
+          <Route index element={<Pupils pupils={pupils} deletePupil={deletePupil}/>}/>
+          <Route path=':id' element={<PupilView pupils={pupils} allLessons={lessons} updatePupil={updatePupil} removePupil={removePupil}/>}/>
+        </Route>        
         </>
         :
         <h1>Loading</h1>}

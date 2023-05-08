@@ -8,7 +8,7 @@ const Pupils = ({pupils, deletePupil})=>{
                 <td>{pupil.name}</td>
                 <td>{pupil.yearGroup}</td>
                 <td onClick={()=>{deletePupil(pupil)}}><button>Delete</button></td>
-                {/* <td><button onClick={<Link></Link>}>View</button> </td> */}
+                <td><Link to={`/pupils/${pupil.id}`}>View</Link></td>
             </tr>
         )
     })

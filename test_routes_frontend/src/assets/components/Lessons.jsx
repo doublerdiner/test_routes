@@ -77,8 +77,6 @@ const Lessons = ({lessons, users, pupils, postLesson, deleteLesson, updateLesson
         lesson.pupils.push(pupil)
         updateLesson(lesson)
     }
-    console.log(lessons)
-    console.log(pupils)
 
     return(
         <>
